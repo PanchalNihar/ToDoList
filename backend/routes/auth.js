@@ -11,7 +11,6 @@ router.post("/signin", async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
-
     // Create new user
     const user = new User({
       email,
@@ -22,7 +21,7 @@ router.post("/signin", async (req, res) => {
     await user.save();
     res.status(201).json({ user });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred during registration" });
+    res.status(400).json({ message: "An error occurred during registration" });
   }
 });
 
