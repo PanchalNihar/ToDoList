@@ -44,7 +44,7 @@ const Navbar = () => {
                 <Link
                   className="nav-link active btn-nav "
                   aria-current="page"
-                  to0="/signup"
+                  to="/signup"
                 >
                   Sign up
                 </Link>
