@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import "./signup.css";
 import HeadingComp from "./HeadingComp";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../store";
 const Login = () => {
+  const history = useNavigate();
+  const dispatch=useDispatch()
+  const [input, setInput] = useState({ email: "", password: "" });
+  const change = (e) => {
+    const { name, value } = e.target;
+    setInput({ ...input, [name]: value });
+  };
+  const submit = async (e) => {
+    e.preventDefault();
+    await axios
+      .post("http://localhost:1000/api/v1/signin", input)
+      .then((response) => {
+        sessionStorage.setItem("id", response.data.others._id);
+        dispatch(authActions.login())
+        history("/todo");
+      });
+  };
   return (
     <div className="signup">
       <div className="container">
@@ -18,6 +39,8 @@ const Login = () => {
                 type="email"
                 name="email"
                 placeholder="Enter Email"
+                onChange={change}
+                value={input.email}
               />
 
               <input
@@ -25,8 +48,12 @@ const Login = () => {
                 type="password"
                 name="password"
                 placeholder="Enter Password"
+                onChange={change}
+                value={input.password}
               />
-              <button className="btn-signup p-2">Sign In</button>
+              <button className="btn-signup p-2" onClick={submit}>
+                Sign In
+              </button>
             </div>
           </div>
         </div>
