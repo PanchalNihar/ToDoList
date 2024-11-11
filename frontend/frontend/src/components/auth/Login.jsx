@@ -28,7 +28,7 @@ const Login = () => {
       <div className="container">
         <div className="row">
           {/* Left Side */}
-          <div className="col-lg-4 d-flex col-left column justify-content-center align-items-center">
+          <div className=" col-lg-4 d-lg-flex col-left column justify-content-center align-items-center d-none">
             <HeadingComp first="Sign" second="In" />
           </div>
           {/* Right Side */}

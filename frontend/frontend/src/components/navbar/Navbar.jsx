@@ -59,37 +59,43 @@ const Navbar = () => {
               </li>
               {!isLoggedIn && (
                 <>
+                <div className="d-flex">
                   <li className="nav-item mx-2">
                     <Link
-                      className="nav-link active btn-nav "
+                      className="nav-link active btn-nav p-lg-0 p-2"
                       aria-current="page"
                       to="/signup"
                     >
                       Sign up
                     </Link>
                   </li>
+                  </div>
+                  <div className="d-flex">
                   <li className="nav-item mx-2">
                     <Link
-                      className="nav-link active btn-nav "
+                      className="nav-link active btn-nav p-lg-0 p-2"
                       aria-current="page"
                       to="/signin"
                     >
                       Sign in
                     </Link>
                   </li>
+                  </div>
                 </>
               )}
               {isLoggedIn && (
                 <>
+                <div className="d-flex ">
                   <li className="nav-item mx-2" onClick={logout}>
                     <Link
-                      className="nav-link active btn-nav "
+                      className="nav-link active btn-nav p-lg-0 p-2"
                       aria-current="page"
                       to="#"
                     >
                       Log out
                     </Link>
                   </li>
+                  </div>
                 </>
               )}
             </ul>

@@ -62,7 +62,7 @@ const Signup = () => {
           </div>
 
           {/* Right Side */}
-          <div className="col-lg-4 d-flex col-left column justify-content-center align-items-center">
+          <div className=" col-lg-4 d-lg-flex col-left column justify-content-center align-items-center  d-none">
             <HeadingComp first="Sign" second="Up" />
           </div>
         </div>

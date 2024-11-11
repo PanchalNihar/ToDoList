@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "./todo.css";
+import axios from "axios";
 import TodoCards from "./TodoCards";
 import Update from "./Update";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -11,7 +10,26 @@ let id = sessionStorage.getItem("id");
 const Todo = () => {
   const [input, setInput] = useState({ title: "", body: "" });
   const [array, setArray] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Might be redundant if using id for login check
+  const [toUpdateTask, setToUpdateTask] = useState(null);
+
+  // Function to fetch tasks from the server
+  const fetchTasks = async () => {
+    if (id) {
+      try {
+        const response = await axios.get(
+          `http://localhost:1000/api/v2/getTasks/${id}`
+        );
+        setArray(response.data.list);
+      } catch (err) {
+        console.error("Error fetching tasks:", err);
+      }
+    }
+  };
+
+  // Function to refresh the tasks after update
+  const refreshTasks = () => {
+    fetchTasks();
+  };
 
   const show = () => {
     document.getElementById("textarea").style.display = "block";
@@ -39,19 +57,13 @@ const Todo = () => {
           })
           .then((response) => {
             console.log(response);
-  
-            // Add the new task to the array immediately
-            setArray((prevArray) => [
-              ...prevArray,
-              { _id: response.data._id, title: input.title, body: input.body },
-            ]);
           });
-  
         setInput({ title: "", body: "" });
         toast.success("Task Added successfully", {
           position: "top-center",
           autoClose: 3000,
         });
+        refreshTasks();
       } else {
         toast.warning("Sign in to add task", {
           position: "top-center",
@@ -60,48 +72,44 @@ const Todo = () => {
       }
     }
   };
-  
 
   const del = async (cardid) => {
-    await axios
-      .delete(`http://localhost:1000/api/v2/deletetask/${cardid}`, {
-        data: { id: id },
-      })
-      .then((response) => {
-        // Immediately remove the task from the array
-        setArray((prevArray) => prevArray.filter((item) => item._id !== cardid));
-  
-        toast.info("Task deleted", {
-          position: "top-center",
-          autoClose: 3000,
+    if (id) {
+      await axios
+        .delete(`http://localhost:1000/api/v2/deletetask/${cardid}`, {
+          data: { id: id },
+        })
+        .then((response) => {
+          toast.info("Task deleted", {
+            position: "top-center",
+            autoClose: 3000,
+          });
         });
+    } else {
+      toast.danger("please signup first", {
+        position: "top-center",
+        autoClose: 3000,
       });
+    }
   };
-  
 
   const dis = (value) => {
     document.getElementById("todo-update").style.display = value;
   };
+
+  const update = (index) => {
+    setToUpdateTask(array[index]);
+  };
+
   useEffect(() => {
-    const fetchTasks = async () => {
-      if (id) {
-        await axios
-          .get(`http://localhost:1000/api/v2/getTasks/${id}`)
-          .then((response) => {
-            setArray(response.data.list);
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      }
-    };
     fetchTasks();
-  }, [id]);
+  }, [id]); // Fetch tasks when the component mounts or when 'id' changes
+
   return (
     <>
       <div className="todo">
         <div className="container todo-main d-flex justify-content-center align-items-center my-4 flex-column">
-          <div className="d-flex flex-column todo-input-div w-50">
+          <div className="d-flex flex-column todo-input-div w-100 p-1">
             <input
               type="text"
               placeholder="Title"
@@ -121,7 +129,7 @@ const Todo = () => {
               className="p-3 todo-input"
             />
           </div>
-          <div className="w-50 d-flex justify-content-end my-3">
+          <div className="w-lg-50 w-100 d-flex justify-content-end my-3">
             <button className="add-btn p-2" onClick={submit}>
               Add
             </button>
@@ -133,13 +141,19 @@ const Todo = () => {
             <div className="row">
               {array &&
                 array.map((item, index) => (
-                  <div className="col-lg-3 col-10 mx-5 my-2" key={index}>
+                  <div
+                    className="col-lg-3 col-11 mx-lg-5  mx-3 my-2"
+                    key={index}
+                  >
                     <TodoCards
                       title={item.title}
                       body={item.body}
                       id={item._id}
                       delid={del}
                       dis={dis}
+                      updateId={index}
+                      toBeUpdate={update}
+                      refreshTasks={refreshTasks}
                     />
                   </div>
                 ))}
@@ -149,7 +163,11 @@ const Todo = () => {
       </div>
       <div className="todo-update" id="todo-update">
         <div className="container update">
-          <Update display={dis} />
+          <Update
+            display={dis}
+            update={toUpdateTask}
+            refreshTasks={refreshTasks}
+          />
         </div>
       </div>
       <ToastContainer />

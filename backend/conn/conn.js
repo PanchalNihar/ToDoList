@@ -5,7 +5,7 @@ const conn= async (req,res)=>{
         console.log("connected to database")
     })
    } catch (error) {
-    res.status(400).json({message:"not connected"})
+    res.status(200).json({message:"not connected"})
    }
 }
 conn()
